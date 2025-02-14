@@ -46,7 +46,8 @@ typedef struct _GstdObject GstdObject;
 /**
  * gstd_new:
  * 
- * @out: placeholder for newly allocated gstd instance.
+ * @out: (transfer full) placeholder for newly allocated gstd instance. Free after
+ * usage using gstd_free()
  * @argc: arguments for gst_init
  * @argv: arguments for gst_init
  * 
@@ -124,7 +125,8 @@ gstd_create (GstD *gstd, const gchar *uri, const gchar *name, const gchar *descr
  * @gstd: A valid gstd instance allocated with gstd_new()
  * @uri: Path to the resource in which the action will be
  * applied in low level CRUD syntax 
- * @resource: Placeholder for the resource required
+ * @resource: (transfer full) Placeholder for the resource required. Free after
+ * usage using g_object_unref()
  * 
  * A new Read call of the argument
  *
@@ -132,6 +134,24 @@ gstd_create (GstD *gstd, const gchar *uri, const gchar *name, const gchar *descr
  */
 GstdReturnCode
 gstd_read (GstD *gstd, const gchar *uri, GstdObject **resource);
+
+/**
+ * gstd_read_to_string:
+ *
+ * @object: The resource to read
+ * @uri: Path to the resource in which the action will be
+ * applied in low level CRUD syntax
+ * @resource: (transfer full) Placeholder for the resource required. Free after
+ * usage using g_object_unref()
+ * @outstring: (transfer full) (nullable) Placeholder for the read result. Free after
+ * usage using g_free()
+ *
+ * A Read call of the argument with the resulting object parsed as JSON
+ *
+ * Returns: GstdReturnCode indicating success or fail
+ */
+GstdReturnCode
+gstd_read_to_string(GstD* gstd, const gchar * uri, GstdObject **resource, gchar** outstring);
 
 /**
  * gstd_update:

@@ -273,6 +273,25 @@ gstd_read (GstD * gstd, const gchar * uri, GstdObject ** resource)
 }
 
 GstdReturnCode
+gstd_read_to_string (GstD * gstd, const gchar * uri, GstdObject ** resource,
+    gchar ** outstring)
+{
+  GstdReturnCode ret = GSTD_EOK;
+
+  g_return_val_if_fail (NULL != gstd, GSTD_NULL_ARGUMENT);
+  g_return_val_if_fail (NULL != gstd->session, GSTD_NULL_ARGUMENT);
+  g_return_val_if_fail (NULL != uri, GSTD_NULL_ARGUMENT);
+  g_return_val_if_fail (NULL != resource, GSTD_NULL_ARGUMENT);
+
+  ret = gstd_read (gstd, uri, resource);
+  if (GSTD_EOK == ret && NULL != outstring) {
+    return gstd_object_to_string (*resource, outstring);
+  } else {
+    return ret;
+  }
+}
+
+GstdReturnCode
 gstd_update (GstD * gstd, const gchar * uri, const gchar * value)
 {
   GstdReturnCode ret = GSTD_EOK;

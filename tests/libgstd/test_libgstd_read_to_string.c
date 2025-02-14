@@ -45,8 +45,28 @@ GST_START_TEST (test_pipeline_read_successful)
 {
   GstdReturnCode ret = GSTD_EOK;
   GstdObject *resource = NULL;
+  gchar *read_str = NULL;
 
-  ret = gstd_read (manager, uri, &resource);
+  ret = gstd_read_to_string (manager, uri, &resource, &read_str);
+  fail_if (GSTD_EOK != ret);
+  fail_if (NULL == resource);
+  fail_if (NULL == read_str);
+  if (read_str) {
+    g_free (read_str);
+  }
+  if (resource) {
+    g_object_unref (resource);
+  }
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_pipeline_read_nullable_outstring_successful)
+{
+  GstdReturnCode ret = GSTD_EOK;
+  GstdObject *resource = NULL;
+
+  ret = gstd_read_to_string (manager, uri, &resource, NULL);
   fail_if (GSTD_EOK != ret);
   fail_if (NULL == resource);
   if (resource) {
@@ -60,10 +80,17 @@ GST_START_TEST (test_pipeline_read_by_name_successful)
 {
   GstdReturnCode ret = GSTD_EOK;
   GstdObject *resource = NULL;
+  gchar *read_str = NULL;
 
-  ret = gstd_read (manager, "pipelines/p1/elements/vts", &resource);
+  ret =
+      gstd_read_to_string (manager, "pipelines/p1/elements/vts", &resource,
+      &read_str);
   fail_if (GSTD_EOK != ret);
   fail_if (NULL == resource);
+  fail_if (NULL == read_str);
+  if (read_str) {
+    g_free (read_str);
+  }
   if (resource) {
     g_object_unref (resource);
   }
@@ -75,7 +102,7 @@ GST_START_TEST (test_pipeline_read_bad_uri)
 {
   GstdReturnCode ret = GSTD_EOK;
   GstdObject *resource = NULL;
-  ret = gstd_read (manager, "uri", &resource);
+  ret = gstd_read_to_string (manager, "uri", &resource, NULL);
 
   fail_if (GSTD_BAD_COMMAND != ret);
   fail_if (NULL != resource);
@@ -87,9 +114,9 @@ GST_START_TEST (test_pipeline_read_bad_uri)
 GST_END_TEST;
 
 static Suite *
-gstd_read_suite (void)
+gstd_read_to_string_suite (void)
 {
-  Suite *suite = suite_create ("gstd_read");
+  Suite *suite = suite_create ("gstd_read_to_string");
   TCase *tc = tcase_create ("general");
 
   suite_add_tcase (suite, tc);
@@ -102,4 +129,4 @@ gstd_read_suite (void)
   return suite;
 }
 
-GST_CHECK_MAIN (gstd_read);
+GST_CHECK_MAIN (gstd_read_to_string);
