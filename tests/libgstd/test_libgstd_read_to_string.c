@@ -51,6 +51,9 @@ GST_START_TEST (test_pipeline_read_successful)
   fail_if (GSTD_EOK != ret);
   fail_if (NULL == resource);
   fail_if (NULL == read_str);
+  gchar *found = g_strstr_len (read_str, -1, "p1");
+  fail_if (NULL == found);
+
   if (read_str) {
     g_free (read_str);
   }
@@ -88,6 +91,8 @@ GST_START_TEST (test_pipeline_read_by_name_successful)
   fail_if (GSTD_EOK != ret);
   fail_if (NULL == resource);
   fail_if (NULL == read_str);
+  gchar *found = g_strstr_len (read_str, -1, "vts");
+  fail_if (NULL == found);
   if (read_str) {
     g_free (read_str);
   }
