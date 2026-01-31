@@ -666,6 +666,23 @@ GstcStatus gstc_pipeline_emit_action (GstClient *client,
    const char *pipeline_name, const char *element,
    const char *action);
 
+
+/**
+ * gstc_send_cmd:
+ * @client: The client returned by gstc_client_new()
+ * @request: The request string to be sent to the daemon
+ * @response: pointer to output string memory representing the response from the daemon,
+ * this memory should be freed by the user.
+ * @timeout: Timeout for the command
+ *
+ * Sends a raw command to the GStreamer Daemon and retrieves the response.
+ *
+ * Returns: GstcStatus indicating success, daemon unreachable, daemon
+ * timeout, bad command
+ */
+GstcStatus gstc_send_cmd(GstClient* client, const char* request, char** response, const int timeout);
+
+
 #ifdef __cplusplus
 }
 #endif
