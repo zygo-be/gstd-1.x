@@ -939,13 +939,20 @@ gstd_parser_action_emit (GstdSession * session, gchar * action,
   g_return_val_if_fail (args, GSTD_NULL_ARGUMENT);
   g_return_val_if_fail (response, GSTD_NULL_ARGUMENT);
 
-  tokens = g_strsplit (args, " ", 3);
+  tokens = g_strsplit (args, " ", 4);
   check_argument (tokens[0], GSTD_BAD_COMMAND);
   check_argument (tokens[1], GSTD_BAD_COMMAND);
   check_argument (tokens[2], GSTD_BAD_COMMAND);
 
-  uri = g_strdup_printf ("/pipelines/%s/elements/%s/actions/%s %s",
-      tokens[0], tokens[1], tokens[2], tokens[2]);
+  /* tokens[3] may be NULL for no-arg actions */
+  if (tokens[3] && tokens[3][0] != '\0') {
+    uri = g_strdup_printf ("/pipelines/%s/elements/%s/actions/%s %s %s",
+        tokens[0], tokens[1], tokens[2], tokens[2], tokens[3]);
+  } else {
+    /* No-arg action: omit the description argument */
+    uri = g_strdup_printf ("/pipelines/%s/elements/%s/actions/%s %s",
+        tokens[0], tokens[1], tokens[2], tokens[2]);
+  }
   ret = gstd_parser_parse_raw_cmd (session, (gchar *) "create", uri, response);
 
   g_free (uri);
@@ -1032,6 +1039,10 @@ gstd_parser_pipeline_create_ref (GstdSession * session, gchar * action,
   ret = gstd_pipeline_increment_refcount (GSTD_PIPELINE (pipeline_node));
 
 create_error:
+  /* gstd_list_find_child returns a ref'd pointer, must unref when done */
+  if (pipeline_node) {
+    g_object_unref (pipeline_node);
+  }
   GST_OBJECT_UNLOCK (session);
   gst_object_unref (pipeline_list_node);
 pipeline_list_node_error:
@@ -1076,6 +1087,10 @@ gstd_parser_pipeline_delete_ref (GstdSession * session, gchar * action,
   }
 
 pipeline_node_error:
+  /* gstd_list_find_child returns a ref'd pointer, must unref when done */
+  if (pipeline_node) {
+    g_object_unref (pipeline_node);
+  }
   GST_OBJECT_UNLOCK (session);
   gst_object_unref (pipeline_list_node);
 pipeline_list_node_error:

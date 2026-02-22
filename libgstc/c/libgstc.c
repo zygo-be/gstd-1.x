@@ -1041,6 +1041,8 @@ GstcStatus gstc_pipeline_list_signals(GstClient* client, const char* pipeline_na
 
     ret = gstc_json_get_child_char_array(response, "response", "nodes", "name", signals, list_lenght);
 
+  free (response);
+
 out:
     free(what);
 
